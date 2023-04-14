@@ -21,15 +21,18 @@
 			</view>
 		</scroll-view>
 		<!-- 悬浮弹框 -->
-		<view class="square_float animate__animated animate__fadeInUp" :style="{ bottom: `${ floatBottom }px` }">
-			<image class="square_float_cover" src="../../static/logo.png" mode="aspectFill"></image>
-			<view class="square_float_info">
-				<view class="square_info_title">狂飙</view>
-				<view class="square_info_desc">上次追到狂飙第二集</view>
+		<template v-if="isFloat">
+			<view class="square_float animate__animated animate__fadeInUp" :style="{ bottom: `${ floatBottom }px` }">
+				<image class="square_float_cover" src="../../static/logo.png" mode="aspectFill"></image>
+				<view class="square_float_info">
+					<view class="square_info_title">狂飙</view>
+					<view class="square_info_desc">上次追到狂飙第二集</view>
+				</view>
+				<view class="square_float_btn">继续观看</view>
+				<text class="square_float_close iconfont icon-guanbi" @click="isFloat = false"></text>
 			</view>
-			<view class="square_float_btn">继续观看</view>
-			<text class="square_float_close iconfont icon-guanbi"></text>
-		</view>
+		</template>
+		
 	</view>
 </template>
 
@@ -37,6 +40,7 @@
 	export default {
 		data() {
 			return {
+				isFloat: false,
 				scrollHeight: 457,
 				floatBottom: 8,
 				giantList: [
@@ -46,6 +50,9 @@
 					{ id: 4, image: '../../static/logo.png', title: '充值', url: '' }
 				]
 			}
+		},
+		onLoad() {
+			setTimeout(() => { this.isFloat = true; }, 500)
 		},
 		onReady() {
 			this.getScrollHeight();

@@ -5,6 +5,10 @@ import Vue from 'vue'
 Vue.config.productionTip = false
 App.mpType = 'app'
 
+Vue.prototype.$goJump = (url, desc='notToken') => {
+	uni.navigateTo({ url });
+}
+
 try {
   function isPromise(obj) {
     return (
