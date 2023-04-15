@@ -2,7 +2,7 @@
 	<view class="mine">
 		<!-- 用户信息 -->
 		<view class="mine_user">
-			<image class="mine_user_avatar" src="../../static/logo.png" mode="aspectFill"></image>
+			<image class="mine_user_avatar" src="../../static/pageImages/default_avatar.png" mode="aspectFill"></image>
 			<view class="mine_user_info">
 				<view class="mine_info_title">英明教主</view>
 				<view class="mine_info_major">用户名ID：3565743758</view>
@@ -28,9 +28,9 @@
 		data() {
 			return {
 				takeList: [
-					{ id: 1, icon: '../../static/logo.png', title: '观看记录', url: '/pages/watching/watching' },
-					{ id: 2, icon: '../../static/logo.png', title: '消费记录', url: '/pages/login/login' },
-					{ id: 3, icon: '../../static/logo.png', title: '充值记录', url: '/pages/login/login' }
+					{ id: 1, icon: '../../static/pageImages/info01.png', title: '观看记录', url: '/pages/watching/watching' },
+					{ id: 2, icon: '../../static/pageImages/info02.png', title: '消费记录', url: '/pages/login/login' },
+					{ id: 3, icon: '../../static/pageImages/info03.png', title: '充值记录', url: '/pages/login/login' }
 				]
 			}
 		},

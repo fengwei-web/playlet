@@ -12,10 +12,10 @@
 		<!-- 内容列表 -->
 		<scroll-view :scroll-y="true" :style="{ height: `${ scrollHeight }px` }">
 			<view class="square_scroll">
-				<block v-for="item in 100" :key="item">
+				<block v-for="item in scrollList" :key="item">
 					<view class="square_scroll_item">
-						<image class="scroll_item_cover" src="../../static/logo.png" mode="aspectFill"></image>
-						<view class="scroll_item_title">狂飙</view>
+						<image class="scroll_item_cover" :src="item.image || ''" mode="aspectFill"></image>
+						<view class="scroll_item_title">{{ item.title || '' }}</view>
 					</view>
 				</block>
 			</view>
@@ -23,7 +23,7 @@
 		<!-- 悬浮弹框 -->
 		<template v-if="isFloat">
 			<view class="square_float animate__animated animate__fadeInUp" :style="{ bottom: `${ floatBottom }px` }">
-				<image class="square_float_cover" src="../../static/logo.png" mode="aspectFill"></image>
+				<image class="square_float_cover" src="../../static/pageImages/play01.png" mode="aspectFill"></image>
 				<view class="square_float_info">
 					<view class="square_info_title">狂飙</view>
 					<view class="square_info_desc">上次追到狂飙第二集</view>
@@ -44,10 +44,18 @@
 				scrollHeight: 457,
 				floatBottom: 8,
 				giantList: [
-					{ id: 1, image: '../../static/logo.png', title: '排行', url: '' },
-					{ id: 2, image: '../../static/logo.png', title: '更新', url: '' },
-					{ id: 3, image: '../../static/logo.png', title: '必看', url: '' },
-					{ id: 4, image: '../../static/logo.png', title: '充值', url: '' }
+					{ id: 1, image: '../../static/pageImages/giant01.png', title: '排行', url: '' },
+					{ id: 2, image: '../../static/pageImages/giant02.png', title: '更新', url: '' },
+					{ id: 3, image: '../../static/pageImages/giant03.png', title: '必看', url: '' },
+					{ id: 4, image: '../../static/pageImages/giant04.png', title: '充值', url: '' }
+				],
+				scrollList: [
+					{ id: 1, image: '../../static/pageImages/play01.png', title: '狂飙' },
+					{ id: 2, image: '../../static/pageImages/play02.png', title: '杀破狼' },
+					{ id: 3, image: '../../static/pageImages/play03.png', title: '妖狐小红娘' },
+					{ id: 4, image: '../../static/pageImages/play04.png', title: '你是我的荣耀' },
+					{ id: 5, image: '../../static/pageImages/play05.png', title: '司藤' },
+					{ id: 6, image: '../../static/pageImages/play06.png', title: '梦华录' }
 				]
 			}
 		},

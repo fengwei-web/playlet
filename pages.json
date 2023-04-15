@@ -31,14 +31,20 @@
 		"backgroundColor": "#FFFFFF",
 		"list": [
 			{
+				"iconPath": "static/tabBarImages/square.png",
+				"selectedIconPath": "static/tabBarImages/square_active.png",
 				"pagePath": "pages/square/square",
 				"text": "广场"
 			},
 			{
+				"iconPath": "static/tabBarImages/watching.png",
+				"selectedIconPath": "static/tabBarImages/watching_active.png",
 				"pagePath": "pages/watching/watching",
 				"text": "追剧"
 			},
 			{
+				"iconPath": "static/tabBarImages/mine.png",
+				"selectedIconPath": "static/tabBarImages/mine_active.png",
 				"pagePath": "pages/mine/mine",
 				"text": "我的"
 			}
