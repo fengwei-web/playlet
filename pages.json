@@ -25,6 +25,25 @@
 			}
 		}
 	],
+	"subPackages": [
+		{
+			"root": "pages_mine",
+			"pages": [
+				{
+					"path": "record/recharge",
+					"style": {
+						"navigationBarTitleText": "充值记录"
+					}
+				},
+				{
+					"path": "record/consumption",
+					"style": {
+						"navigationBarTitleText": "消费记录"
+					}
+				}
+			]
+		}
+	],
 	"tabBar": {
 		"color": "#666666",
 		"selectedColor": "#333333",

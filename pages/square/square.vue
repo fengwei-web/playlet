@@ -13,10 +13,7 @@
 		<scroll-view :scroll-y="true" :style="{ height: `${ scrollHeight }px` }">
 			<view class="square_scroll">
 				<block v-for="item in scrollList" :key="item">
-					<view class="square_scroll_item">
-						<image class="scroll_item_cover" :src="item.image || ''" mode="aspectFill"></image>
-						<view class="scroll_item_title">{{ item.title || '' }}</view>
-					</view>
+					<playItem class="square_scroll_component" :item="item" />
 				</block>
 			</view>
 		</scroll-view>
@@ -32,7 +29,6 @@
 				<text class="square_float_close iconfont icon-guanbi" @click="isFloat = false"></text>
 			</view>
 		</template>
-		
 	</view>
 </template>
 
@@ -55,7 +51,13 @@
 					{ id: 3, image: '../../static/pageImages/play03.png', title: '妖狐小红娘' },
 					{ id: 4, image: '../../static/pageImages/play04.png', title: '你是我的荣耀' },
 					{ id: 5, image: '../../static/pageImages/play05.png', title: '司藤' },
-					{ id: 6, image: '../../static/pageImages/play06.png', title: '梦华录' }
+					{ id: 6, image: '../../static/pageImages/play06.png', title: '梦华录' },
+					{ id: 7, image: '../../static/pageImages/play01.png', title: '狂飙' },
+					{ id: 8, image: '../../static/pageImages/play02.png', title: '杀破狼' },
+					{ id: 9, image: '../../static/pageImages/play03.png', title: '妖狐小红娘' },
+					{ id: 10, image: '../../static/pageImages/play04.png', title: '你是我的荣耀' },
+					{ id: 11, image: '../../static/pageImages/play05.png', title: '司藤' },
+					{ id: 12, image: '../../static/pageImages/play06.png', title: '梦华录' }
 				]
 			}
 		},
@@ -91,15 +93,8 @@
 	}
 	.square_scroll {
 		display: grid; grid-template-columns: auto auto auto;
-		.square_scroll_item {
-			width: 228rpx; background: #fff; border-radius: 16rpx; overflow: hidden;
-			box-shadow: 0rpx 6rpx 20rpx 0rpx rgba(235,235,235,0.40); margin: 0 16rpx 20rpx 0;
-			.scroll_item_cover { width: 100%; height: 364rpx; }
-			.scroll_item_title {
-				padding: 12rpx 16rpx; font-size: 28rpx; color: #333;
-				overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-			}
-			&:nth-child(3n+3) { margin-right: 0; }
+		.square_scroll_component {
+			margin: 0 16rpx 20rpx 0;
 		}
 	}
 	.square_float {

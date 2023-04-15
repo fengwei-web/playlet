@@ -5,5 +5,7 @@
 <script>
 </script>
 
-<style>
+<style>page { background: linear-gradient(180deg,#ffffff, #f6f7f8); }</style>
+<style lang="scss" scoped>
+	.watching {}
 </style>

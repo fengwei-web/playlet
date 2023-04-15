@@ -29,8 +29,8 @@
 			return {
 				takeList: [
 					{ id: 1, icon: '../../static/pageImages/info01.png', title: '观看记录', url: '/pages/watching/watching' },
-					{ id: 2, icon: '../../static/pageImages/info02.png', title: '消费记录', url: '/pages/login/login' },
-					{ id: 3, icon: '../../static/pageImages/info03.png', title: '充值记录', url: '/pages/login/login' }
+					{ id: 2, icon: '../../static/pageImages/info02.png', title: '消费记录', url: '/pages_mine/record/consumption' },
+					{ id: 3, icon: '../../static/pageImages/info03.png', title: '充值记录', url: '/pages_mine/record/recharge' }
 				]
 			}
 		},
