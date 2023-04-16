@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4016033 */
-  src: url('https://at.alicdn.com/t/c/font_4016033_rxjup0ogno.woff2?t=1681463345556') format('woff2'),
-       url('https://at.alicdn.com/t/c/font_4016033_rxjup0ogno.woff?t=1681463345556') format('woff'),
-       url('https://at.alicdn.com/t/c/font_4016033_rxjup0ogno.ttf?t=1681463345556') format('truetype');
+  src: url('https://at.alicdn.com/t/c/font_4016033_x6rq0rtsnxk.woff2?t=1681649541799') format('woff2'),
+       url('https://at.alicdn.com/t/c/font_4016033_x6rq0rtsnxk.woff?t=1681649541799') format('woff'),
+       url('https://at.alicdn.com/t/c/font_4016033_x6rq0rtsnxk.ttf?t=1681649541799') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-icmore:before {
+  content: "\e62f";
 }
 
 .icon-guanbi:before {
