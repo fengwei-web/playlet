@@ -12,7 +12,7 @@
 		<!-- 我的追剧 -->
 		<view class="watching_mine">
 			<view class="watching_title">我的追剧</view>
-			<view class="watching_mine_select">
+			<!-- <view class="watching_mine_select" :style="{ 'margin-bottom': `${ floatBottom }px` }">
 				<block v-for="item in 2" :key="item">
 					<view class="watching_mine_item">
 						<image class="watching_item_cover" src="../../static/pageImages/play01.png" mode="aspectFill"></image>
@@ -28,6 +28,11 @@
 						</view>
 					</view>
 				</block>
+			</view> -->
+			<view class="watching_mine_nodata">
+				<image class="watching_nodata_icon" src="../../static/pageImages/no_play.png" mode=""></image>
+				<view class="watching_nodata_desc">暂无追剧</view>
+				<image class="watching_nodata_btn" src="../../static/pageImages/watch_btn.png" mode=""></image>
 			</view>
 		</view>
 	</view>
@@ -37,6 +42,7 @@
 	export default {
 		data() {
 			return {
+				floatBottom: 8,
 				viewList: [
 					{ id: 1, image: '../../static/pageImages/play01.png', title: '狂飙' },
 					{ id: 2, image: '../../static/pageImages/play02.png', title: '杀破狼' },
@@ -45,6 +51,16 @@
 					// { id: 5, image: '../../static/pageImages/play05.png', title: '司藤' },
 					// { id: 6, image: '../../static/pageImages/play06.png', title: '梦华录' },
 				]
+			}
+		},
+		onLoad() {
+			this.getTabBarHeight();
+		},
+		methods: {
+			// 获取tabbar高度
+			getTabBarHeight() {
+				const { windowBottom } = uni.getSystemInfoSync();
+				this.floatBottom = windowBottom + uni.upx2px(20);
 			}
 		}
 	}
@@ -88,6 +104,12 @@
 					}
 				}
 			}
+		}
+		.watching_mine_nodata {
+			display: flex; flex-direction: column; align-items: center;
+			.watching_nodata_icon { width: 320rpx; height: 256rpx; }
+			.watching_nodata_desc { padding: 32rpx 0; font-size: 28rpx; color: #999; }
+			.watching_nodata_btn { width: 248rpx; height: 72rpx; }
 		}
 	}
 	.watching_title { font-size: 32rpx; font-weight: bold; color: #333; padding: 0 4rpx; }
