@@ -3,7 +3,7 @@
 		<!-- 金刚区 -->
 		<view class="square_giant flex flex--align-items--center flex--justify-content--space-around">
 			<block v-for="item in giantList" :key="item.id">
-				<view class="square_giant_item flex flex--row flex--align-items--center">
+				<view class="square_giant_item flex flex--row flex--align-items--center" @click="$goJump(item.url, 'token')">
 					<image :src="item.image || ''" mode=""></image>
 					<text>{{ item.title || '' }}</text>
 				</view>
@@ -12,8 +12,8 @@
 		<!-- 内容列表 -->
 		<scroll-view :scroll-y="true" :style="{ height: `${ scrollHeight }px` }">
 			<view class="square_scroll">
-				<block v-for="item in scrollList" :key="item">
-					<playItem class="square_scroll_component" :item="item" />
+				<block v-for="item in scrollList" :key="item.id">
+					<playItem class="square_scroll_component" :item="item" @click.native="$goJump(`/pages_square/screening/screening`, 'token')" />
 				</block>
 			</view>
 		</scroll-view>
@@ -40,10 +40,10 @@
 				scrollHeight: 457,
 				floatBottom: 8,
 				giantList: [
-					{ id: 1, image: '../../static/pageImages/giant01.png', title: '排行', url: '' },
-					{ id: 2, image: '../../static/pageImages/giant02.png', title: '更新', url: '' },
-					{ id: 3, image: '../../static/pageImages/giant03.png', title: '必看', url: '' },
-					{ id: 4, image: '../../static/pageImages/giant04.png', title: '充值', url: '' }
+					{ id: 1, image: '../../static/pageImages/giant01.png', title: '排行', url: '/pages_square/opera/ranking' },
+					{ id: 2, image: '../../static/pageImages/giant02.png', title: '更新', url: '/pages_square/opera/update' },
+					{ id: 3, image: '../../static/pageImages/giant03.png', title: '必看', url: '/pages_square/opera/breaking' },
+					{ id: 4, image: '../../static/pageImages/giant04.png', title: '充值', url: '/pages_square/recharge/recharge' }
 				],
 				scrollList: [
 					{ id: 1, image: '../../static/pageImages/play01.png', title: '狂飙' },

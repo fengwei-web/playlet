@@ -1,0 +1,74 @@
+<template>
+	<view class="recharge">
+		<view class="recharge_balance">账户余额：<text>0</text> K币</view>
+		<!-- 充值选项 -->
+		<view class="recharge_option">
+			<block v-for="item in 6" :key="item">
+				<view class="recharge_option_list" :class="{ 'active': item == 1 }">
+					<view class="recharge_list_regular">
+						<view class="recharge_list_regular_price">69.9元</view>
+						<view class="recharge_list_regular_get">得6990K币</view>
+					</view>
+					<view class="recharge_list_many">多送12元</view>
+				</view>
+			</block>
+		</view>
+		<!-- 广告 -->
+		<view class="recharge_advert">
+			<image class="recharge_advert_cover" src="../../static/logo.png" mode=""></image>
+		</view>
+		<!-- 充值说明 -->
+		<view class="recharge_prove">
+			<view class="recharge_prove_title">充值说明：</view>
+			<view class="recharge_prove_desc">虚拟商品，已经购买不得退换</view>
+			<view class="recharge_prove_content">用户使用K币解锁剧集，后期重复观看无需重新解锁充值后到账可能有延迟，2小时内未到账请与客服联系。</view>
+			<view class="recharge_prove_content">未满18周岁的未成年人，应在父母或其他监护人的监护、指导、同意下进行如付费充值、付费 阅读等相关操作</view>
+			<view class="recharge_prove_content">在本平台所做的任何操作将视为已获得您的父母或其他监护人的同意并由您和您的父母或其他监护人承担相关法律责任</view>
+		</view>
+	</view>
+</template>
+
+<script>
+</script>
+
+<style lang="scss" scoped>
+	.recharge { padding: 0 24rpx; }
+	.recharge_balance {
+		padding: 40rpx 0; display: flex; align-items: center;
+		font-size: 28rpx; color: #1D1D1D;
+		text { color: $color; margin-right: 16rpx; }
+	}
+	.recharge_option {
+		display: flex; flex-wrap: wrap; justify-content: space-between;
+		.recharge_option_list {
+			width: 338rpx; background: rgba(255, 255, 255, .11); border: 2rpx solid #f5f5f5;
+			border-radius: 16rpx; margin-top: 20rpx;
+			.recharge_list_regular {
+				padding: 16rpx 24rpx;
+				.recharge_list_regular_price { font-size: 38rpx; font-weight: bold; color: #333 }
+				.recharge_list_regular_get { font-size: 24rpx; color: #999; margin-top: 8rpx; }
+			}
+			.recharge_list_many {
+				padding: 4rpx 0; border-top: 2rpx solid #f5f5f5;
+				font-size: 28rpx; color: $color; text-align: center;
+			}
+			&.active {
+				background: rgba(233, 89, 37, .11); border-color: $color;
+				.recharge_list_regular {
+					.recharge_list_regular_price { color: $color; }
+				}
+				.recharge_list_many { background: $color; color: #fff; }
+			}
+		}
+	}
+	.recharge_advert {
+		height: 208rpx; padding: 0 8rpx; margin-top: 60rpx;
+		.recharge_advert_cover { width: 100%; height: 100%; border-radius: 16rpx; }
+	}
+	.recharge_prove {
+		padding: 36rpx 0; padding-bottom: 78rpx;
+		.recharge_prove_title { font-size: 24rpx; color: #666; }
+		.recharge_prove_desc { padding: 16rpx 0 6rpx 0; font-size: 24rpx; color: #666 }
+		.recharge_prove_content { font-size: 22rpx; color: #666; line-height: 40rpx; margin-top: 10rpx; }
+	}
+</style>

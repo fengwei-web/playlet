@@ -27,6 +27,43 @@
 	],
 	"subPackages": [
 		{
+			"root": "pages_square",
+			"pages": [
+				{
+					"path": "opera/ranking",
+					"style": {
+						"navigationBarTitleText": "排行"
+					}
+				},
+				{
+					"path": "opera/update",
+					"style": {
+						"navigationBarTitleText": "更新"
+					}
+				},
+				{
+					"path": "opera/breaking",
+					"style": {
+						"navigationBarTitleText": "必看"
+					}
+				},
+				{
+					"path": "recharge/recharge",
+					"style": {
+						"navigationBarTitleText": "充值"
+					}
+				},
+				{
+					"path": "screening/screening",
+					"style": {
+						"navigationBarBackgroundColor": "#000000",
+						"navigationBarTextStyle": "white",
+						"navigationBarTitleText": ""
+					}
+				}
+			]
+		},
+		{
 			"root": "pages_mine",
 			"pages": [
 				{

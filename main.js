@@ -5,6 +5,7 @@ import Vue from 'vue'
 Vue.config.productionTip = false
 App.mpType = 'app'
 
+// 跳转
 Vue.prototype.$goJump = (url, desc='notToken') => {
 	uni.navigateTo({ url });
 }
