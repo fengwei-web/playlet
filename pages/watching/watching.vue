@@ -5,7 +5,7 @@
 			<view class="watching_title">观看记录</view>
 			<view class="watching_view_select">
 				<block v-for="item in viewList" :key="item.id">
-					<playItem class="watching_select_component" :item="item"></playItem>
+					<playItem class="watching_select_component" :cover="item.image" :title="item.title"></playItem>
 				</block>
 			</view>
 		</view>

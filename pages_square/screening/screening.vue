@@ -13,6 +13,7 @@
 					:show-center-play-btn="false"
 					:show-fullscreen-btn="false"
 					@timeupdate="videoTimeUpdateHandle"
+					@ended="videoEndedHandle"
 				></video>
 				<template v-if="!isPlay">
 					<view class="videoRegin_mainBody_play" @click="videoPlayHandle(true)">
@@ -32,7 +33,7 @@
 					<view class="videoRegion_ability_list_text">分享</view>
 				</view>
 				<view class="videoRegion_ability_list">
-					<image class="videoRegion_ability_list_icon" src="../static/watching_select_icon.png" mode=""></image>
+					<image class="videoRegion_ability_list_icon" src="../static/watching_icon.png" mode=""></image>
 					<view class="videoRegion_ability_list_text">追剧</view>
 				</view>
 			</view>
@@ -108,6 +109,11 @@
 			// 监听视频进度变化
 			videoTimeUpdateHandle({ detail }) {
 				this.initialTime = detail.currentTime;
+			},
+			// 监听视频播放到结尾
+			videoEndedHandle() {
+				this.isPlay = false;
+				this.initialTime = 0;
 			}
 		}
 	}

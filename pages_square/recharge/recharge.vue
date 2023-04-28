@@ -1,15 +1,17 @@
 <template>
 	<view class="recharge">
-		<view class="recharge_balance">账户余额：<text>0</text> K币</view>
+		<view class="recharge_balance">账户余额：<text>{{ loginData.balance || 0 }}</text> U币</view>
 		<!-- 充值选项 -->
 		<view class="recharge_option">
-			<block v-for="item in 6" :key="item">
+			<block v-for="item in rechargeList" :key="item.id">
 				<view class="recharge_option_list" :class="{ 'active': item == 1 }">
 					<view class="recharge_list_regular">
-						<view class="recharge_list_regular_price">69.9元</view>
-						<view class="recharge_list_regular_get">得6990K币</view>
+						<view class="recharge_list_regular_price">{{ item.amount || 0 }}元</view>
+						<view class="recharge_list_regular_get">{{ item.mes || '' }}</view>
 					</view>
-					<view class="recharge_list_many">多送12元</view>
+					<template v-if="item.mes2">
+						<view class="recharge_list_many">{{ item.mes2 || '' }}</view>
+					</template>
 				</view>
 			</block>
 		</view>
@@ -29,6 +31,7 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex';
 	export default {
 		data() {
 			return {
@@ -37,6 +40,9 @@
 		},
 		onLoad() {
 			this.getRechargeData();
+		},
+		computed: {
+			...mapState(['loginData'])
 		},
 		methods: {
 			// 获取充值列表
@@ -66,7 +72,11 @@
 			.recharge_list_regular {
 				padding: 16rpx 24rpx;
 				.recharge_list_regular_price { font-size: 38rpx; font-weight: bold; color: #333 }
-				.recharge_list_regular_get { font-size: 24rpx; color: #999; margin-top: 8rpx; }
+				.recharge_list_regular_get {
+					font-size: 24rpx; color: #999; margin-top: 8rpx;
+					overflow: hidden; text-overflow: ellipsis;
+					display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+				}
 			}
 			.recharge_list_many {
 				padding: 4rpx 0; border-top: 2rpx solid #f5f5f5;

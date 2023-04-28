@@ -6,6 +6,7 @@
 		</view>
 		<view class="login_opens">
 			<view class="login_opens_loginBtn" @click="weixinLoginHandle">用户一键登录</view>
+			<button @click="getUserInfos">用户一键登录</button>
 		</view>
 	</view>
 </template>
@@ -28,6 +29,22 @@
 			...mapState(['list'])
 		},
 		methods: {
+			getUserInfos(event) {
+				wx.getUserProfile({
+					desc: '获取您的微信个人信息',
+					success:(res)=>{
+						console.log(res)
+					},
+					fail:function(e){
+							wx.showToast({
+								title: '你选择了取消',
+								icon: "none",
+								duration: 1500,
+								mask: true
+							})
+					}
+				})
+			},
 			// 微信一键登录
 			weixinLoginHandle() {
 				uni.login({
@@ -54,6 +71,7 @@
 				const { code, result } = await this.$http('/user');
 				this.$store.commit('setUserInfo', result);
 				uni.showToast({ title: '登录成功', icon: 'none' });
+				uni.$emit('updatePageData');
 				setTimeout(() => { uni.navigateBack({ delta: 1 }) }, 500)
 			},
 			...mapMutations(['setUserInfo'])

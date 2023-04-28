@@ -1,13 +1,13 @@
 <template>
 	<view class="square_scroll_item">
-		<image class="scroll_item_cover" :src="item.image || ''" mode="aspectFill"></image>
-		<view class="scroll_item_title">{{ item.title || '' }}</view>
+		<image class="scroll_item_cover" :src="cover || ''" mode="aspectFill"></image>
+		<view class="scroll_item_title">{{ title || '' }}</view>
 	</view>
 </template>
 
 <script>
 	export default {
-		props: ['item']
+		props: ['cover', 'title']
 	}
 </script>
 

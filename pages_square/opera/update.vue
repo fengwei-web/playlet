@@ -1,8 +1,18 @@
 <template>
 	<view class="opera">
-		<block v-for="item in scrollList" :key="item.id">
-			<playItem class="opera_component" :item="item" />
-		</block>
+		<template v-if="scrollList.length">
+			<block v-for="item in scrollList" :key="item.id">
+				<playItem
+					class="opera_component"
+					:cover="item.tvImage"
+					:title="item.tvName"
+					@click.native="$goJump(`/pages_square/screening/screening`, 'token')"
+				/>
+			</block>
+		</template>
+		<template v-else>
+			<view class="no-data">暂无数据</view>
+		</template>
 	</view>
 </template>
 
@@ -31,15 +41,29 @@
 					{ id: 18, image: '../../static/pageImages/play06.png', title: '梦华录' }
 				]
 			}
+		},
+		onLoad() {
+			this.getMustData();
+		},
+		methods: {
+			// 获取必看数据
+			async getMustData() {
+				uni.showLoading({ mask: true });
+				const { code, message, result } = await this.$http('/tvRecommend');
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.scrollList = result || [];
+				uni.hideLoading();
+			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	.opera {
-		padding: 0 20rpx; display: grid; grid-template-columns: auto auto auto;
+		padding: 0 20rpx; padding-top: 20rpx; display: flex; flex-wrap: wrap;
 		.opera_component {
-			margin: 0 16rpx 20rpx 0;
+			margin: 0 12rpx 20rpx 0;
+			&:nth-child(3n+3) { margin-right: 0; }
 		}
 	}
 </style>

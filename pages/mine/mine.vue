@@ -2,11 +2,11 @@
 	<view class="mine">
 		<!-- 用户信息 -->
 		<view class="mine_user">
-			<image class="mine_user_avatar" src="../../static/pageImages/default_avatar.png" mode="aspectFill"></image>
+			<image class="mine_user_avatar" :src="loginData.icon || '../../static/pageImages/default_avatar.png'" mode="aspectFill"></image>
 			<view class="mine_user_info">
-				<view class="mine_info_title">英明教主</view>
-				<view class="mine_info_major">用户名ID：3565743758</view>
-				<view class="mine_info_remainder">我的K币：0K币</view>
+				<view class="mine_info_title">{{ loginData.nickname || '微信用户' }}</view>
+				<view class="mine_info_major">用户名ID：{{ loginData.id || 000000 }}</view>
+				<view class="mine_info_remainder">我的U币：{{ loginData.balance || 0 }} U币</view>
 			</view>
 		</view>
 		<!-- 三个记录 -->
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex';
 	export default {
 		data() {
 			return {
@@ -34,10 +35,13 @@
 				]
 			}
 		},
+		computed: {
+			...mapState(['loginData'])
+		},
 		methods: {
 			// take的每一项点击事件
 			takeItemHandleEvent({ id, url }) {
-				if(id !== 1) return this.$goJump(url);
+				if(id !== 1) return this.$goJump(url, 'token');
 				uni.switchTab({ url });
 			}
 		}

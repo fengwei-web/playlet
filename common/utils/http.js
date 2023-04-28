@@ -2,7 +2,7 @@ const BASE_URL = 'https://dj.quanyi.xyz/dj'; // 测试
 
 export default {
 	request(url, data = {}, method = 'POST', header) {
-		const params = url !== '/login' ? { ...data, userid: uni.getStorageSync('userid') || '' } : data;
+		const params = url !== '/login' ? { ...data, userId: uni.getStorageSync('userid') || '' } : data;
 		return new Promise((resolve, reject) => {
 			uni.request({
 				url: BASE_URL + url,
