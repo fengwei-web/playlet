@@ -15,7 +15,7 @@
 		</view>
 		<!-- 广告 -->
 		<view class="recharge_advert">
-			<image class="recharge_advert_cover" src="../../static/logo.png" mode=""></image>
+			<image class="recharge_advert_cover" src="../../static/pageImages/recharge_advert.png" mode=""></image>
 		</view>
 		<!-- 充值说明 -->
 		<view class="recharge_prove">
@@ -29,6 +29,26 @@
 </template>
 
 <script>
+	export default {
+		data() {
+			return {
+				rechargeList: []
+			}
+		},
+		onLoad() {
+			this.getRechargeData();
+		},
+		methods: {
+			// 获取充值列表
+			async getRechargeData() {
+				uni.showLoading({ mask: true });
+				const { code, message, result } = await this.$http('/scheme');
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.rechargeList = result || [];
+				uni.hideLoading();
+			}
+		}
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -42,7 +62,7 @@
 		display: flex; flex-wrap: wrap; justify-content: space-between;
 		.recharge_option_list {
 			width: 338rpx; background: rgba(255, 255, 255, .11); border: 2rpx solid #f5f5f5;
-			border-radius: 16rpx; margin-top: 20rpx;
+			border-radius: 16rpx; margin-top: 20rpx; overflow: hidden;
 			.recharge_list_regular {
 				padding: 16rpx 24rpx;
 				.recharge_list_regular_price { font-size: 38rpx; font-weight: bold; color: #333 }

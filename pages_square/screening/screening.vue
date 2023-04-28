@@ -6,8 +6,7 @@
 				<video
 					id="myVideo"
 					class="videoRegin_mainBody_video"
-					src="../static/001-两个人街头下棋 这个情况竟然没赢 气的从宽回家吃了两大碗米饭.mp4"
-					poster="https://img1.baidu.com/it/u=413643897,2296924942&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1682701200&t=96933e9d99b32ad0682c39d393a9afca"
+					:src="srcUrl"
 					:initial-time="initialTime"
 					:controls="true"
 					:show-play-btn="false"
@@ -67,16 +66,18 @@
 						<view class="screening_footer_openItem_text">下集</view>
 					</view>
 				</view>
-				<view class="screening_footer_meet">
+				<view class="screening_footer_meet" @click="isMeet = true;">
 					<image class="screening_footer_meet_icon" src="../static/drama_icon.png" mode=""></image>
 					<view class="screening_footer_meet_text">剧集</view>
 				</view>
 			</view>
 		</view>
 		<!-- 剧集选择区域 -->
-		<view class="screening_meetSelect animate__animated animate__fadeIn">
-			<view class="screening_meetSelect_content">123123123</view>
-		</view>
+		<template v-if="isMeet">
+			<view class="screening_meetSelect animate__animated animate__fadeIn" @click="isMeet = false;">
+				<view class="screening_meetSelect_content" @click.stop="isMeet = true;">123123123</view>
+			</view>
+		</template>
 	</view>
 </template>
 
@@ -84,9 +85,11 @@
 	export default {
 		data() {
 			return {
+				srcUrl: 'http://47.93.9.90/img/1636141647.mp4',
 				initialTime: 0,
 				videoContext: null,
-				isPlay: false
+				isPlay: false,
+				isMeet: false
 			}
 		},
 		onReady() {
@@ -136,7 +139,7 @@
 		}
 	}
 	.screening_footer {
-		height: 114rpx; padding: 0 24rpx; color: #fff; background: #f00;
+		height: 114rpx; padding: 0 24rpx; color: #fff;
 		display: flex; align-items: center; justify-content: space-between;
 		.screening_footer_info {
 			flex: 1; flex-shrink: 0;

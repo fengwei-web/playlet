@@ -2,12 +2,18 @@ import App from './App'
 
 // #ifndef VUE3
 import Vue from 'vue'
+import store from 'store'
+import http from './common/utils/http.js';
 Vue.config.productionTip = false
 App.mpType = 'app'
 
+Vue.prototype.$http = http.request;
 // 跳转
 Vue.prototype.$goJump = (url, desc='notToken') => {
-	uni.navigateTo({ url });
+	if(desc !== 'token') return uni.navigateTo({ url });
+	const userid = uni.getStorageSync('userid');
+	if(userid) return uni.navigateTo({ url });
+	uni.navigateTo({ url: '/pages/login/login' });
 }
 
 try {
@@ -39,7 +45,7 @@ try {
 } catch (error) { }
 
 const app = new Vue({
-  ...App
+  ...App, store
 })
 app.$mount()
 // #endif

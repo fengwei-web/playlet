@@ -45,6 +45,7 @@
 					{ id: 3, image: '../../static/pageImages/giant03.png', title: '必看', url: '/pages_square/opera/breaking' },
 					{ id: 4, image: '../../static/pageImages/giant04.png', title: '充值', url: '/pages_square/recharge/recharge' }
 				],
+				page: 1,
 				scrollList: [
 					{ id: 1, image: '../../static/pageImages/play01.png', title: '狂飙' },
 					{ id: 2, image: '../../static/pageImages/play02.png', title: '杀破狼' },
@@ -62,12 +63,21 @@
 			}
 		},
 		onLoad() {
-			setTimeout(() => { this.isFloat = true; }, 500)
+			// setTimeout(() => { this.isFloat = true; }, 500)
+			this.getShortPlayData();
 		},
 		onReady() {
 			this.getScrollHeight();
 		},
 		methods: {
+			// 获取短剧列表
+			async getShortPlayData() {
+				uni.showLoading({ mask: true });
+				const params = { pageNo: this.page, pageSize: 20 };
+				const { code, message, result } = await this.$http('/tv', params);
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.scrollList = result || [];
+			},
 			// 获取页面剩余高度
 			getScrollHeight() {
 				const { windowHeight, windowBottom } = uni.getSystemInfoSync();
