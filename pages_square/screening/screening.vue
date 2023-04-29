@@ -188,7 +188,11 @@
 			// 下一集
 			nextEpisodeHandle() {
 				if(this.currentEpisode === this.shortDetailList.length - 1) return uni.showToast({ title: '当前为最后一集', icon: 'none' });
-				if(this.shortDetailList[this.currentEpisode + 1].pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
+				if(this.shortDetailList[this.currentEpisode + 1].pay) {
+					this.isPlay = false; this.initialTime = 0;
+					uni.showToast({ title: '购买本集后可看', icon: 'none' });
+					return;
+				}
 				this.isPlay = true; this.initialTime = 0; this.currentEpisode++;
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
 			},

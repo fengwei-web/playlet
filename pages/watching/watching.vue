@@ -7,7 +7,7 @@
 				<template v-if="viewList.length">
 					<block v-for="(item, index) in viewList" :key="item.tvId">
 						<template v-if="index < 6">
-							<playItem class="watching_select_component" :cover="item.tvImage" :title="item.tvName" @click="$goJump(`/pages_square/screening/screening?id=${ item.tvId }&series=${ item.series - 1 }`, 'token')"></playItem>
+							<playItem class="watching_select_component" :cover="item.tvImage" :title="item.tvName" @click.native="$goJump(`/pages_square/screening/screening?id=${ item.tvId }&series=${ item.series - 1 }`, 'token')"></playItem>
 						</template>
 					</block>
 				</template>

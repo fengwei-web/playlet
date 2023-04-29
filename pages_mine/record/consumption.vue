@@ -8,7 +8,7 @@
 						<view class="consumption_left_date">{{ item.creTime || '' }}</view>
 					</view>
 					<view class="consumption_item_right">
-						<view class="consumption_right_price">-{{ item.coin || '0U币' }}</view>
+						<view class="consumption_right_price">{{ item.coin || '0U币' }}</view>
 						<view class="consumption_right_desc">支付成功</view>
 					</view>
 				</view>
