@@ -9,7 +9,7 @@
 					:src="currentEpisodeData.videoUrl"
 					:poster="currentEpisodeData.tvImage"
 					:initial-time="initialTime"
-					:autoplay="true"
+					:autoplay="isPlay"
 					:controls="true"
 					:show-play-btn="false"
 					:show-center-play-btn="false"
@@ -120,7 +120,7 @@
 				initialTime: 0,
 				videoContext: null,
 				isLike: 0,
-				isPlay: true,
+				isPlay: false,
 				isMeet: false
 			}
 		},
@@ -151,6 +151,7 @@
 				this.shortDetailList = result || [];
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
 				this.isLike = like;
+				this.isPlay = true;
 				uni.hideLoading();
 			},
 			// 看剧接口调用
@@ -181,14 +182,14 @@
 			// 上一集
 			prevEpisodeHandle() {
 				if(this.currentEpisode === 0) return uni.showToast({ title: '当前为第一集', icon: 'none' });
-				this.initialTime = 0; this.currentEpisode--;
+				this.isPlay = true; this.initialTime = 0; this.currentEpisode--;
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
 			},
 			// 下一集
 			nextEpisodeHandle() {
 				if(this.currentEpisode === this.shortDetailList.length - 1) return uni.showToast({ title: '当前为最后一集', icon: 'none' });
 				if(this.shortDetailList[this.currentEpisode + 1].pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
-				this.initialTime = 0; this.currentEpisode++;
+				this.isPlay = true; this.initialTime = 0; this.currentEpisode++;
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
 			},
 			// 播放暂停事件
@@ -202,7 +203,7 @@
 				if(item.pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
 				this.currentEpisode = index;
 				this.currentEpisodeData = item;
-				this.initialTime = 0; this.isMeet = false;
+				this.isPlay = true; this.initialTime = 0; this.isMeet = false;
 			},
 			// 监听视频进度变化
 			videoTimeUpdateHandle({ detail }) {
@@ -210,8 +211,7 @@
 			},
 			// 监听视频播放到结尾
 			videoEndedHandle() {
-				this.isPlay = false;
-				this.initialTime = 0;
+				this.nextEpisodeHandle();
 			}
 		}
 	}
