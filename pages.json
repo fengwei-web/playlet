@@ -67,6 +67,12 @@
 			"root": "pages_mine",
 			"pages": [
 				{
+					"path": "record/spectate",
+					"style": {
+						"navigationBarTitleText": "观看记录"
+					}
+				},
+				{
 					"path": "record/recharge",
 					"style": {
 						"navigationBarTitleText": "充值记录"

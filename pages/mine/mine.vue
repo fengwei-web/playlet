@@ -12,7 +12,7 @@
 		<!-- 三个记录 -->
 		<view class="mine_take">
 			<block v-for="item in takeList" :key="item.id">
-				<view class="mine_take_item" @click="takeItemHandleEvent(item)">
+				<view class="mine_take_item" @click="$goJump(item.url, 'token')">
 					<view class="mine_take_title">
 						<image :src="item.icon || ''" mode=""></image> {{ item.title || '' }}
 					</view>
@@ -29,7 +29,7 @@
 		data() {
 			return {
 				takeList: [
-					{ id: 1, icon: '../../static/pageImages/info01.png', title: '观看记录', url: '/pages/watching/watching' },
+					{ id: 1, icon: '../../static/pageImages/info01.png', title: '观看记录', url: '/pages_mine/record/spectate' },
 					{ id: 2, icon: '../../static/pageImages/info02.png', title: '消费记录', url: '/pages_mine/record/consumption' },
 					{ id: 3, icon: '../../static/pageImages/info03.png', title: '充值记录', url: '/pages_mine/record/recharge' }
 				]
@@ -37,13 +37,6 @@
 		},
 		computed: {
 			...mapState(['loginData'])
-		},
-		methods: {
-			// take的每一项点击事件
-			takeItemHandleEvent({ id, url }) {
-				if(id !== 1) return this.$goJump(url, 'token');
-				uni.switchTab({ url });
-			}
 		}
 	}
 </script>

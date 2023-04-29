@@ -17,6 +17,7 @@
 				const userid = uni.getStorageSync('userid');
 				if(!userid) return;
 				const { code, result } = await this.$http('/user');
+				if(code !== 200) return;
 				this.$store.commit('setUserInfo', result);
 			},
 			...mapMutations(['setUserInfo'])

@@ -3,8 +3,8 @@
 		<view class="recharge_balance">账户余额：<text>{{ loginData.balance || 0 }}</text> U币</view>
 		<!-- 充值选项 -->
 		<view class="recharge_option">
-			<block v-for="item in rechargeList" :key="item.id">
-				<view class="recharge_option_list" :class="{ 'active': item == 1 }">
+			<block v-for="(item, index) in rechargeList" :key="item.id">
+				<view class="recharge_option_list" :class="{ 'active': currentIndex == index }" @click="rechargeItemHandle(index)">
 					<view class="recharge_list_regular">
 						<view class="recharge_list_regular_price">{{ item.amount || 0 }}元</view>
 						<view class="recharge_list_regular_get">{{ item.mes || '' }}</view>
@@ -16,7 +16,7 @@
 			</block>
 		</view>
 		<!-- 广告 -->
-		<view class="recharge_advert">
+		<view class="recharge_advert" @click="advertHandle">
 			<image class="recharge_advert_cover" src="../../static/pageImages/recharge_advert.png" mode=""></image>
 		</view>
 		<!-- 充值说明 -->
@@ -31,10 +31,11 @@
 </template>
 
 <script>
-	import { mapState } from 'vuex';
+	import { mapState, mapMutations } from 'vuex';
 	export default {
 		data() {
 			return {
+				currentIndex: null,
 				rechargeList: []
 			}
 		},
@@ -52,7 +53,60 @@
 				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
 				this.rechargeList = result || [];
 				uni.hideLoading();
-			}
+			},
+			// 点击广告匹配一年
+			advertHandle() {
+				let index = null;
+				this.rechargeList.forEach((item, itemIndex) => {
+					if(item.amount === 365) index = itemIndex;
+				})
+				if(index === null) return;
+				this.rechargeItemHandle(index);
+			},
+			// 点击列表项选中并下单支付
+			rechargeItemHandle(index) {
+				if(index === this.currentIndex) return this.currentIndex = null;
+				this.currentIndex = index;
+				// 调用下单接口
+				this.setPlaceOrderAjax()
+			},
+			// 调用下单接口
+			async setPlaceOrderAjax() {
+				const appid = 'wx6b96da9ef24474f8';
+				const schemeId = this.rechargeList[this.currentIndex].id
+				const params = { appid, schemeId };
+				uni.showLoading({ mask: true });
+				const { code, message, result } = await this.$http('/order', params);
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				uni.showToast({ title: '下单成功', icon: 'none' });
+				this.setPaymentAjax(result);
+			},
+			// 支付
+			setPaymentAjax(result) {
+				const option = {
+					provider: 'wxpay', timeStamp: result.timestamp,
+					nonceStr: result.nonceStr, package: result.packageVal,
+					signType: result.signType, paySign: result.paySign
+				}
+				uni.requestPayment({
+					...option,
+					success: res => {
+						this.currentIndex = null;
+						this.getUserInfoData();
+						uni.showToast({ title: '支付成功', icon: 'none' });
+					},
+					fail: error => {
+						uni.showToast({ title: '支付失败', icon: 'none' });
+					}
+				})
+			},
+			// 获取用户信息并存储
+			async getUserInfoData() {
+				const { code, result } = await this.$http('/user');
+				if(code !== 200) return;
+				this.$store.commit('setUserInfo', result);
+			},
+			...mapMutations(['setUserInfo'])
 		}
 	}
 </script>

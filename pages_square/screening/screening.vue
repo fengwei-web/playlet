@@ -6,8 +6,10 @@
 				<video
 					id="myVideo"
 					class="videoRegin_mainBody_video"
-					:src="srcUrl"
+					:src="currentEpisodeData.videoUrl"
+					:poster="currentEpisodeData.tvImage"
 					:initial-time="initialTime"
+					:autoplay="true"
 					:controls="true"
 					:show-play-btn="false"
 					:show-center-play-btn="false"
@@ -31,9 +33,15 @@
 				<view class="videoRegion_ability_list">
 					<image class="videoRegion_ability_list_icon" src="../static/share_icon.png" mode=""></image>
 					<view class="videoRegion_ability_list_text">分享</view>
+					<button open-type="share"></button>
 				</view>
-				<view class="videoRegion_ability_list">
-					<image class="videoRegion_ability_list_icon" src="../static/watching_icon.png" mode=""></image>
+				<view class="videoRegion_ability_list" @click="chaseShortHandle">
+					<template v-if="!isLike">
+						<image class="videoRegion_ability_list_icon" src="../static/watching_icon.png" mode=""></image>
+					</template>
+					<template v-else>
+						<image class="videoRegion_ability_list_icon" src="../static/watching_select_icon.png" mode=""></image>
+					</template>
 					<view class="videoRegion_ability_list_text">追剧</view>
 				</view>
 			</view>
@@ -41,12 +49,12 @@
 		<!-- 底部展示及操作按钮 -->
 		<view class="screening_footer">
 			<view class="screening_footer_info">
-				<view class="screening_footer_dramaname">狂飙</view>
-				<view class="screening_footer_diversity">狂飙第一集</view>
+				<view class="screening_footer_dramaname">{{ currentEpisodeData.title || '' }}</view>
+				<view class="screening_footer_diversity">{{ currentEpisodeData.title || '' }}</view>
 			</view>
 			<view class="screening_footer_option">
 				<view class="screening_footer_open">
-					<view class="screening_footer_openItem">
+					<view class="screening_footer_openItem" @click="prevEpisodeHandle">
 						<image class="screening_footer_openItem_icon" src="../static/prev_icon.png" mode=""></image>
 						<view class="screening_footer_openItem_text">上集</view>
 					</view>
@@ -62,7 +70,7 @@
 							<view class="screening_footer_openItem_text">暂停</view>
 						</view>
 					</template>
-					<view class="screening_footer_openItem">
+					<view class="screening_footer_openItem" @click="nextEpisodeHandle">
 						<image class="screening_footer_openItem_icon" src="../static/next_icon.png" mode=""></image>
 						<view class="screening_footer_openItem_text">下集</view>
 					</view>
@@ -76,7 +84,25 @@
 		<!-- 剧集选择区域 -->
 		<template v-if="isMeet">
 			<view class="screening_meetSelect animate__animated animate__fadeIn" @click="isMeet = false;">
-				<view class="screening_meetSelect_content" @click.stop="isMeet = true;">123123123</view>
+				<view class="screening_meetSelect_content" @click.stop="isMeet = true;">
+					<view class="meetSelect_content_head">
+						<view class="meetSelect_head_name">{{ currentEpisodeData.title || 0 }}</view>
+						<view class="meetSelect_head_desc">{{ shortDetailList.length || 0 }}集全</view>
+					</view>
+					<view class="meetSelect_content_list">
+						<block v-for="(item, itemIndex) in shortDetailList" :key="itemIndex">
+							<view class="meetSelect_content_item" @click.stop="selectSeriesHandle(item, itemIndex)">
+								<template v-if="item.pay">
+									<image class="meetSelect_item_lock" src="../static/lock_icon.png" mode=""></image>
+								</template>
+								<view class="meetSelect_item_name">第{{ item.series || 0 }}集</view>
+								<template v-if="currentEpisodeData.series === item.series">
+									<image class="meetSelect_item_select" src="../static/select_icon.png" mode=""></image>
+								</template>
+							</view>
+						</block>
+					</view>
+				</view>
 			</view>
 		</template>
 	</view>
@@ -86,12 +112,22 @@
 	export default {
 		data() {
 			return {
+				id: 0,
+				currentEpisode: 0,
+				currentEpisodeData: {},
+				shortDetailList: [],
 				srcUrl: 'http://47.93.9.90/img/1636141647.mp4',
 				initialTime: 0,
 				videoContext: null,
-				isPlay: false,
+				isLike: 0,
+				isPlay: true,
 				isMeet: false
 			}
+		},
+		onLoad(option) {
+			this.id = option.id ? parseInt(option.id) : 0;
+			this.currentEpisode = option.series ? parseInt(option.series) : 0;
+			this.getShortDetailData();
 		},
 		onReady() {
 			this.videoContext = uni.createVideoContext('myVideo');
@@ -99,12 +135,74 @@
 		onUnload() {
 			this.videoContext = null;
 		},
+		watch: {
+			isPlay(newData) {
+				if(!newData) return;
+				this.setLookShortData();
+			}
+		},
 		methods: {
+			// 获取短剧详情数据
+			async getShortDetailData() {
+				const params = { id: this.id };
+				uni.showLoading({ mask: true });
+				const { code, message, result, like } = await this.$http('/tvDetailAll', params);
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.shortDetailList = result || [];
+				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
+				this.isLike = like;
+				uni.hideLoading();
+			},
+			// 看剧接口调用
+			async setLookShortData() {
+				const params = { tvId: this.id, series: this.currentEpisodeData.series }
+				const { code } = await this.$http('/recordAdd', params);
+				uni.$emit('updateRecord')
+			},
+			// 追剧
+			chaseShortHandle() {
+				if(!this.isLike) return this.setChaseShortAjax('/likeAdd');
+				this.setChaseShortAjax('/likeDel')
+			},
+			// 追剧接口调用
+			async setChaseShortAjax(url) {
+				const params = { tvId: this.id };
+				uni.showLoading({ mask: true });
+				const { code, message } = await this.$http(url, params);
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				if(!this.isLike) {
+					uni.showToast({ title: '追剧成功', icon: 'none' });
+					this.isLike = 1;
+				}else {
+					uni.showToast({ title: '取消追剧成功', icon: 'none' });
+					this.isLike = 0;
+				}
+			},
+			// 上一集
+			prevEpisodeHandle() {
+				if(this.currentEpisode === 0) return uni.showToast({ title: '当前为第一集', icon: 'none' });
+				this.initialTime = 0; this.currentEpisode--;
+				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
+			},
+			// 下一集
+			nextEpisodeHandle() {
+				if(this.currentEpisode === this.shortDetailList.length - 1) return uni.showToast({ title: '当前为最后一集', icon: 'none' });
+				if(this.shortDetailList[this.currentEpisode + 1].pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
+				this.initialTime = 0; this.currentEpisode++;
+				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
+			},
 			// 播放暂停事件
 			videoPlayHandle(isPlay) {
 				this.isPlay = isPlay;
 				if(isPlay) return this.videoContext.play();
 				this.videoContext.pause();
+			},
+			// 选择剧集
+			selectSeriesHandle(item, index) {
+				if(item.pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
+				this.currentEpisode = index;
+				this.currentEpisodeData = item;
+				this.initialTime = 0; this.isMeet = false;
 			},
 			// 监听视频进度变化
 			videoTimeUpdateHandle({ detail }) {
@@ -138,8 +236,10 @@
 			padding: 0 24rpx; position: absolute; right: 0; bottom: 0;
 			.videoRegion_ability_list {
 				display: flex; flex-direction: column; align-items: center; margin-bottom: 32rpx;
+				position: relative;
 				.videoRegion_ability_list_icon { width: 60rpx; height: 60rpx; }
 				.videoRegion_ability_list_text { font-size: 24rpx; margin-top: 5rpx; }
+				button { position: absolute; left: 0; right: 0; top: 0; bottom: 0; opacity: 0; }
 				&:last-of-type { margin-bottom: 100rpx; }
 			}
 		}
@@ -149,8 +249,16 @@
 		display: flex; align-items: center; justify-content: space-between;
 		.screening_footer_info {
 			flex: 1; flex-shrink: 0;
-			.screening_footer_dramaname { font-size: 28rpx; font-weight: bold; }
-			.screening_footer_diversity { font-size: 24rpx; margin-top: 8rpx; }
+			.screening_footer_dramaname {
+				font-size: 28rpx; font-weight: bold;
+				overflow: hidden; text-overflow: ellipsis;
+				display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+			}
+			.screening_footer_diversity {
+				font-size: 24rpx; margin-top: 8rpx;
+				overflow: hidden; text-overflow: ellipsis;
+				display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+			}
 		}
 		.screening_footer_option {
 			display: flex; align-items: center;
@@ -175,7 +283,33 @@
 		position: fixed; left: 0; right: 0; top: 0; bottom: 0;
 		display: flex; align-items: flex-end; background: rgba(0, 0, 0, .4);
 		.screening_meetSelect_content {
-			height: 300rpx; width: 100%; background: #fff;
+			display: flex; flex-direction: column;
+			height: 910rpx; width: 100%; background: #fff; border-radius: 32rpx 32rpx 0 0;
+			.meetSelect_content_head {
+				padding: 32rpx 24rpx; padding-bottom: 30rpx; border-bottom: 2rpx solid #E5E5E5;
+				display: flex; align-items: center;
+				.meetSelect_head_name { font-size: 32rpx; font-weight: bold; color: #333; }
+				.meetSelect_head_desc { font-size: 28rpx; color: #666; margin-left: 20rpx; }
+			}
+			.meetSelect_content_list {
+				flex: 1; overflow: auto; padding: 12rpx 24rpx; padding-bottom: 32rpx;
+				display: flex; flex-wrap: wrap;
+				.meetSelect_content_item {
+					width: 220rpx; height: 80rpx; border-radius: 16rpx; overflow: hidden;
+					display: flex; align-items: center; justify-content: center; background: #F5F5F5;
+					margin: 20rpx 20rpx 0 0; position: relative;
+					.meetSelect_item_lock {
+						width: 18rpx; height: 24rpx;
+						position: absolute; top: 16rpx; right: 16rpx;
+					}
+					.meetSelect_item_name { font-size: 28rpx; color: #333; }
+					.meetSelect_item_select {
+						width: 50rpx; height: 44rpx;
+						position: absolute; bottom: 0; right: 0;
+					}
+					&:nth-child(3n+3) { margin-right: 0; } 
+				}
+			}
 		}
 	}
 </style>

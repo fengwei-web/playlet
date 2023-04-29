@@ -4,36 +4,53 @@
 		<view class="watching_view">
 			<view class="watching_title">观看记录</view>
 			<view class="watching_view_select">
-				<block v-for="item in viewList" :key="item.id">
-					<playItem class="watching_select_component" :cover="item.image" :title="item.title"></playItem>
-				</block>
+				<template v-if="viewList.length">
+					<block v-for="(item, index) in viewList" :key="item.tvId">
+						<template v-if="index < 6">
+							<playItem class="watching_select_component" :cover="item.tvImage" :title="item.tvName" @click="$goJump(`/pages_square/screening/screening?id=${ item.tvId }&series=${ item.series - 1 }`, 'token')"></playItem>
+						</template>
+					</block>
+				</template>
+				<template v-else>
+					<view class="no-data">暂无数据</view>
+				</template>
 			</view>
+			<template v-if="viewList.length > 6">
+				<view class="watching_view_more" @click="$goJump('/pages_mine/record/spectate', 'token')">
+					<view>查看更多</view>
+					<image src="../../static/pageImages/more_icon.png" mode=""></image>
+				</view>
+			</template>
 		</view>
 		<!-- 我的追剧 -->
 		<view class="watching_mine">
 			<view class="watching_title">我的追剧</view>
-			<!-- <view class="watching_mine_select" :style="{ 'margin-bottom': `${ floatBottom }px` }">
-				<block v-for="item in 2" :key="item">
-					<view class="watching_mine_item">
-						<image class="watching_item_cover" src="../../static/pageImages/play01.png" mode="aspectFill"></image>
-						<view class="watching_item_content">
-							<view class="watch_content_name">狂飙</view>
-							<view class="watch_content_info">
-								<view class="content_info_left">
-									<view class="content_left_head">更新至 <text>第三十五集</text></view>
-									<view class="content_left_desc">看到 <text>狂飙第一集</text></view>
+			<template v-if="likeList.length">
+				<view class="watching_mine_select">
+					<block v-for="item in likeList" :key="item.tvId">
+						<view class="watching_mine_item" @click="$goJump(`/pages_square/screening/screening?id=${ item.tvId }&series=${ item.series - 1 }`, 'token')">
+							<image class="watching_item_cover" :src="item.tvImage || ''" mode="aspectFill"></image>
+							<view class="watching_item_content">
+								<view class="watch_content_name">{{ item.tvName || '' }}</view>
+								<view class="watch_content_info">
+									<view class="content_info_left">
+										<view class="content_left_head">更新至 <text>第{{ item.numUpdate || 0 }}集</text></view>
+										<view class="content_left_desc">看到 <text>{{ item.tvName ||'' }}第{{ item.series || 0 }}集</text></view>
+									</view>
+									<text class="content_info_icon iconfont icon-icmore"></text>
 								</view>
-								<text class="content_info_icon iconfont icon-icmore"></text>
 							</view>
 						</view>
-					</view>
-				</block>
-			</view> -->
-			<view class="watching_mine_nodata">
-				<image class="watching_nodata_icon" src="../../static/pageImages/no_play.png" mode=""></image>
-				<view class="watching_nodata_desc">暂无追剧</view>
-				<image class="watching_nodata_btn" src="../../static/pageImages/watch_btn.png" mode=""></image>
-			</view>
+					</block>
+				</view>
+			</template>
+			<template v-else>
+				<view class="watching_mine_nodata">
+					<image class="watching_nodata_icon" src="../../static/pageImages/no_play.png" mode=""></image>
+					<view class="watching_nodata_desc">暂无追剧</view>
+					<image class="watching_nodata_btn" src="../../static/pageImages/watch_btn.png" mode=""></image>
+				</view>
+			</template>
 		</view>
 	</view>
 </template>
@@ -42,25 +59,30 @@
 	export default {
 		data() {
 			return {
-				floatBottom: 8,
-				viewList: [
-					{ id: 1, image: '../../static/pageImages/play01.png', title: '狂飙' },
-					{ id: 2, image: '../../static/pageImages/play02.png', title: '杀破狼' },
-					{ id: 3, image: '../../static/pageImages/play03.png', title: '妖狐小红娘' },
-					// { id: 4, image: '../../static/pageImages/play04.png', title: '你是我的荣耀' },
-					// { id: 5, image: '../../static/pageImages/play05.png', title: '司藤' },
-					// { id: 6, image: '../../static/pageImages/play06.png', title: '梦华录' },
-				]
+				viewList: [],
+				likeList: []
 			}
 		},
-		onLoad() {
-			this.getTabBarHeight();
+		onShow() {
+			const userid = uni.getStorageSync('userid');
+			if(!userid) return;
+			this.getViewRecordData();
+			this.getMyLikeData();
 		},
 		methods: {
-			// 获取tabbar高度
-			getTabBarHeight() {
-				const { windowBottom } = uni.getSystemInfoSync();
-				this.floatBottom = windowBottom + uni.upx2px(20);
+			// 获取观看记录
+			async getViewRecordData() {
+				const { code, message, result } = await this.$http('/record');
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.viewList = result || [];
+			},
+			// 获取我的追剧
+			async getMyLikeData() {
+				uni.showLoading({ mask: true });
+				const { code, message, result } = await this.$http('/like');
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.likeList = result || [];
+				uni.hideLoading();
 			}
 		}
 	}
@@ -71,10 +93,16 @@
 	.watching { padding: 0 20rpx; min-height: 100vh; background: linear-gradient(180deg,#ffffff, #f6f7f8); }
 	.watching_view {
 		.watching_view_select {
-			padding-top: 32rpx; display: grid; grid-template-columns: auto auto auto;
+			padding-top: 20rpx; display: flex; flex-wrap: wrap;
 			.watching_select_component {
-				margin: 0 16rpx 20rpx 0;
+				margin: 0 12rpx 20rpx 0;
+				&:nth-child(3n+3) { margin-right: 0; }
 			}
+		}
+		.watching_view_more {
+			padding: 12rpx 0; display: flex; align-items: center; justify-content: center;
+			view { font-size: 28rpx; color: $color; }
+			image { width: 28.48rpx; height: 28.48rpx; margin-left: 16rpx; }
 		}
 	}
 	.watching_mine {

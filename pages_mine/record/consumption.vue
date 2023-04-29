@@ -1,17 +1,22 @@
 <template>
 	<view class="consumption">
-		<block v-for="item in consumptionList" :key="item.id">
-			<view class="consumption_item">
-				<view class="consumption_item_left">
-					<view class="consumption_left_title">{{ item.title || '' }}</view>
-					<view class="consumption_left_date">{{ item.date || '' }}</view>
+		<template v-if="consumptionList.length">
+			<block v-for="item in consumptionList" :key="item.id">
+				<view class="consumption_item">
+					<view class="consumption_item_left">
+						<view class="consumption_left_title">{{ item.mes || '' }}</view>
+						<view class="consumption_left_date">{{ item.creTime || '' }}</view>
+					</view>
+					<view class="consumption_item_right">
+						<view class="consumption_right_price">-{{ item.coin || '0U币' }}</view>
+						<view class="consumption_right_desc">支付成功</view>
+					</view>
 				</view>
-				<view class="consumption_item_right">
-					<view class="consumption_right_price">-{{ item.price || '0.00' }}</view>
-					<view class="consumption_right_desc">支付成功</view>
-				</view>
-			</view>
-		</block>
+			</block>
+		</template>
+		<template v-else>
+			<view class="no-data">暂无数据</view>
+		</template>
 	</view>
 </template>
 
@@ -19,18 +24,20 @@
 	export default {
 		data() {
 			return {
-				consumptionList: [
-					{ id: 1, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 2, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 3, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 4, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 5, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 6, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 7, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 8, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 9, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' },
-					{ id: 10, title: '道聚城：100元礼包*1', date: '2023-4-13 21:42', price: '97.00' }
-				]
+				consumptionList: []
+			}
+		},
+		onLoad() {
+			this.getConsumptionRecordData();
+		},
+		methods: {
+			// 获取消费记录
+			async getConsumptionRecordData() {
+				uni.showLoading({ mask: true });
+				const { code, message, result } = await this.$http('/expend');
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				this.consumptionList = result || [];
+				uni.hideLoading();
 			}
 		}
 	}

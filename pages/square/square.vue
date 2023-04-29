@@ -18,7 +18,7 @@
 							class="square_scroll_component"
 							:cover="item.tvImage"
 							:title="item.tvName"
-							@click.native="$goJump(`/pages_square/screening/screening`, 'token')" />
+							@click.native="$goJump(`/pages_square/screening/screening?id=${ item.id }`, 'token')" />
 					</block>
 				</template>
 				<template v-else>
@@ -29,13 +29,13 @@
 		<!-- 悬浮弹框 -->
 		<template v-if="isFloat">
 			<view class="square_float animate__animated animate__fadeInUp" :style="{ bottom: `${ floatBottom }px` }">
-				<image class="square_float_cover" src="../../static/pageImages/play01.png" mode="aspectFill"></image>
+				<image class="square_float_cover" :src="viewData.tvImage || ''" mode="aspectFill"></image>
 				<view class="square_float_info">
-					<view class="square_info_title">狂飙</view>
-					<view class="square_info_desc">上次追到狂飙第二集</view>
+					<view class="square_info_title">{{ viewData.tvName || '' }}</view>
+					<view class="square_info_desc">上次追到{{ viewData.tvName || '' }}第{{ viewData.series || 0 }}集</view>
 				</view>
-				<view class="square_float_btn">继续观看</view>
-				<text class="square_float_close iconfont icon-guanbi" @click="isFloat = false"></text>
+				<view class="square_float_btn" @click="$goJump(`/pages_square/screening/screening?id=${ viewData.tvId }&series=${ viewData.series - 1 }`, 'token')">继续观看</view>
+				<text class="square_float_close iconfont icon-guanbi" @click="closeFloatHandle"></text>
 			</view>
 		</template>
 	</view>
@@ -48,6 +48,7 @@
 				isFloat: false,
 				scrollHeight: 457,
 				floatBottom: 8,
+				viewData: {},
 				giantList: [
 					{ id: 1, image: '../../static/pageImages/giant01.png', title: '排行', url: '/pages_square/opera/ranking' },
 					// { id: 2, image: '../../static/pageImages/giant02.png', title: '更新', url: '/pages_square/opera/update' },
@@ -55,23 +56,42 @@
 					{ id: 4, image: '../../static/pageImages/giant04.png', title: '充值', url: '/pages_square/recharge/recharge' }
 				],
 				page: 1,
-				pageSize: 10,
+				pageSize: 20,
 				isLoad: true,
 				scrollList: []
 			}
 		},
 		onLoad() {
-			setTimeout(() => { this.isFloat = true; }, 500)
+			const userid = uni.getStorageSync('userid');
+			if(!userid) return;
+			this.getViewRecordData();
 			this.getShortPlayData();
 			uni.$on('updatePageData', () => {
 				this.isLoad = true; this.page = 1; this.scrollList = [];
 				this.getShortPlayData();
 			})
+			uni.$on('updateRecord', () => {
+				this.getViewRecordData();
+			})
 		},
 		onReady() {
 			this.getScrollHeight();
 		},
+		onHide() {
+			this.closeFloatHandle();
+		},
+		onUnload() {
+			this.closeFloatHandle();
+		},
 		methods: {
+			// 获取观看记录
+			async getViewRecordData() {
+				const { code, message, result } = await this.$http('/record');
+				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
+				if(!result.length) return;
+				this.viewData = result[0] || {};
+				setTimeout(() => { this.isFloat = true; }, 500)
+			},
 			// 获取短剧列表
 			async getShortPlayData() {
 				uni.showLoading({ mask: true });
@@ -85,6 +105,11 @@
 				}
 				this.scrollList = [ ...this.scrollList, ...result ];
 				uni.hideLoading();
+			},
+			// 关闭弹框
+			closeFloatHandle() {
+				this.isFloat = false;
+				this.viewData = {};
 			},
 			// 页面触底事件
 			setScrolltolower() {
