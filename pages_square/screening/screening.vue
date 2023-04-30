@@ -113,7 +113,7 @@
 		data() {
 			return {
 				id: 0,
-				currentEpisode: 0,
+				currentEpisode: null,
 				currentEpisodeData: {},
 				shortDetailList: [],
 				srcUrl: 'http://47.93.9.90/img/1636141647.mp4',
@@ -136,8 +136,8 @@
 			this.videoContext = null;
 		},
 		watch: {
-			isPlay(newData) {
-				if(!newData) return;
+			
+			currentEpisode(newData) {
 				this.setLookShortData();
 			}
 		},

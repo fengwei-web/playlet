@@ -6,7 +6,7 @@
 					class="opera_component"
 					:cover="item.tvImage"
 					:title="item.tvName"
-					@click.native="$goJump(`/pages_square/screening/screening`, 'token')"
+					@click.native="$goJump(`/pages_square/screening/screening?id=${ item.id }`, 'token')"
 				/>
 			</block>
 		</template>
