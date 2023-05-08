@@ -16,6 +16,11 @@ Vue.prototype.$goJump = (url, desc='notToken') => {
 	uni.navigateTo({ url: '/pages/login/login' });
 }
 
+// 等待onLaunch执行结束
+Vue.prototype.$onLaunched = new Promise(resolve => {
+	Vue.prototype.$isResolve = resolve
+})
+
 try {
   function isPromise(obj) {
     return (

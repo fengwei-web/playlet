@@ -109,6 +109,7 @@
 </template>
 
 <script>
+	import { mapState, mapMutations } from 'vuex';
 	export default {
 		data() {
 			return {
@@ -124,7 +125,8 @@
 				isMeet: false
 			}
 		},
-		onLoad(option) {
+		async onLoad(option) {
+			await this.$onLaunched;
 			this.id = option.id ? parseInt(option.id) : 0;
 			this.currentEpisode = option.series ? parseInt(option.series) : 0;
 			this.getShortDetailData();
@@ -136,10 +138,12 @@
 			this.videoContext = null;
 		},
 		watch: {
-			
 			currentEpisode(newData) {
 				this.setLookShortData();
 			}
+		},
+		computed: {
+			...mapState(['loginData'])
 		},
 		methods: {
 			// 获取短剧详情数据
@@ -188,13 +192,16 @@
 			// 下一集
 			nextEpisodeHandle() {
 				if(this.currentEpisode === this.shortDetailList.length - 1) return uni.showToast({ title: '当前为最后一集', icon: 'none' });
-				if(this.shortDetailList[this.currentEpisode + 1].pay) {
-					this.isPlay = false; this.initialTime = 0;
-					uni.showToast({ title: '购买本集后可看', icon: 'none' });
-					return;
-				}
+				if(!this.loginData.balance || this.loginData.balance < this.shortDetailList[this.currentEpisode + 1].pay) return this.$goJump('/pages_square/recharge/recharge');
+				// if(this.shortDetailList[this.currentEpisode + 1].pay) {
+				// 	this.isPlay = false; this.initialTime = 0;
+				// 	uni.showToast({ title: '购买本集后可看', icon: 'none' });
+				// 	return;
+				// }
 				this.isPlay = true; this.initialTime = 0; this.currentEpisode++;
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
+				this.getShortDetailData();
+				this.getUserInfoData();
 			},
 			// 播放暂停事件
 			videoPlayHandle(isPlay) {
@@ -204,10 +211,17 @@
 			},
 			// 选择剧集
 			selectSeriesHandle(item, index) {
-				if(item.pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
+				// if(item.pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
+				if(!this.loginData.balance || this.loginData.balance < item.pay) {
+					this.$goJump('/pages_square/recharge/recharge');
+					this.isMeet = false;
+					return;
+				}
 				this.currentEpisode = index;
 				this.currentEpisodeData = item;
 				this.isPlay = true; this.initialTime = 0; this.isMeet = false;
+				this.getShortDetailData();
+				this.getUserInfoData();
 			},
 			// 监听视频进度变化
 			videoTimeUpdateHandle({ detail }) {
@@ -216,7 +230,14 @@
 			// 监听视频播放到结尾
 			videoEndedHandle() {
 				this.nextEpisodeHandle();
-			}
+			},
+			// 获取用户信息并存储
+			async getUserInfoData() {
+				const { code, result } = await this.$http('/user');
+				if(code !== 200) return;
+				this.$store.commit('setUserInfo', result);
+			},
+			...mapMutations(['setUserInfo'])
 		}
 	}
 </script>

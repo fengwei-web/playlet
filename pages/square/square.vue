@@ -61,12 +61,13 @@
 				scrollList: []
 			}
 		},
-		onShow() {
-			const userid = uni.getStorageSync('userid');
-			if(!userid) return uni.navigateTo({ url: '/pages/login/login' });
-			this.isLoad = true; this.page = 1; this.scrollList = [];
+		async onLoad() {
+			await this.$onLaunched;
 			this.getShortPlayData();
 			this.getViewRecordData();
+			uni.$on('updateRecord', () => {
+				this.getViewRecordData();
+			})
 		},
 		onReady() {
 			this.getScrollHeight();

@@ -8,7 +8,7 @@
 						<view class="recharge_left_date">{{ item.creTime || '' }}</view>
 					</view>
 					<view class="recharge_item_right">
-						<view class="recharge_right_price">{{ item.coin || '0U币' }}</view>
+						<view class="recharge_right_price">+{{ item.coin || '0U币' }}</view>
 						<view class="recharge_right_desc">支付成功</view>
 					</view>
 				</view>
