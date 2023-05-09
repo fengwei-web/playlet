@@ -1,16 +1,22 @@
 <script>
 	import { mapState, mapMutations } from 'vuex';
 	export default {
-		onLaunch: function(option) {
-			this.weixinLoginHandle();
+		onLaunch: function({ query }) {
+			uni.showModal({
+				title: '参数',
+				content: JSON.stringify(query)
+			})
+			if(!query.caId) return this.weixinLoginHandle();
+			const optionData = { caId: query.caId, planId: query.planId, bd_vid: query.bd_vid };
+			this.weixinLoginHandle(optionData);
 		},
 		methods: {
 			// 微信一键登录
-			weixinLoginHandle() {
+			weixinLoginHandle(optionData) {
 				const { deviceModel, osName } = uni.getSystemInfoSync();
 				uni.login({
 					success: ({ code }) => {
-						this.setLoginAjax(code, deviceModel, osName);
+						this.setLoginAjax(code, deviceModel, osName, optionData);
 					},
 					fail: error => {
 						uni.showToast({ title: '登录失败！', icon: 'none' })
@@ -18,9 +24,10 @@
 				})
 			},
 			// 登录接口请求
-			async setLoginAjax(code, model, systemType) {
+			async setLoginAjax(code, model, systemType, optionData) {
 				const appid = 'wx6b96da9ef24474f8';
-				const params = { appid, code, model, systemType };
+				let params = { appid, code, model, systemType };
+				params = optionData ? { ...params, ...optionData } : params;
 				uni.showLoading({ mask: true });
 				const { code: status, result, message } = await this.$http('/login', params, 'POST');
 				if(status !== 200) return uni.showToast({ title: message, icon: 'none' });

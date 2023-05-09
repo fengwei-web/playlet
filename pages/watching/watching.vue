@@ -48,7 +48,7 @@
 				<view class="watching_mine_nodata">
 					<image class="watching_nodata_icon" src="../../static/pageImages/no_play.png" mode=""></image>
 					<view class="watching_nodata_desc">暂无追剧</view>
-					<image class="watching_nodata_btn" src="../../static/pageImages/watch_btn.png" mode=""></image>
+					<image class="watching_nodata_btn" src="../../static/pageImages/watch_btn.png" mode="" @click="guWatchingHandle"></image>
 				</view>
 			</template>
 		</view>
@@ -83,6 +83,10 @@
 				if(code !== 200) return uni.showToast({ title: message, icon: 'none' });
 				this.likeList = result || [];
 				uni.hideLoading();
+			},
+			// 去追剧跳转首页
+			guWatchingHandle() {
+				uni.switchTab({ url: '/pages/square/square' });
 			}
 		}
 	}

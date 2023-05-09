@@ -114,6 +114,7 @@
 		data() {
 			return {
 				id: 0,
+				isLoad: null,
 				currentEpisode: null,
 				currentEpisodeData: {},
 				shortDetailList: [],
@@ -131,16 +132,23 @@
 			this.currentEpisode = option.series ? parseInt(option.series) : 0;
 			this.getShortDetailData();
 		},
+		onShow() {
+			this.isPlay = true;
+		},
+		onHide() {
+			this.isPlay = false;
+		},
 		onReady() {
 			this.videoContext = uni.createVideoContext('myVideo');
+			
 		},
 		onUnload() {
 			this.videoContext = null;
 		},
 		watch: {
-			currentEpisode(newData) {
-				this.setLookShortData();
-			}
+			// currentEpisode(newData) {
+			// 	this.setLookShortData();
+			// }
 		},
 		computed: {
 			...mapState(['loginData'])
@@ -157,12 +165,14 @@
 				this.isLike = like;
 				this.isPlay = true;
 				uni.hideLoading();
+				!this.isLoad && this.setLookShortData()
 			},
 			// 看剧接口调用
 			async setLookShortData() {
 				const params = { tvId: this.id, series: this.currentEpisodeData.series }
 				const { code } = await this.$http('/recordAdd', params);
-				uni.$emit('updateRecord')
+				uni.$emit('updateRecord');
+				this.isLoad = 1;
 			},
 			// 追剧
 			chaseShortHandle() {
@@ -184,13 +194,16 @@
 				}
 			},
 			// 上一集
-			prevEpisodeHandle() {
+			async prevEpisodeHandle() {
 				if(this.currentEpisode === 0) return uni.showToast({ title: '当前为第一集', icon: 'none' });
 				this.isPlay = true; this.initialTime = 0; this.currentEpisode--;
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
+				await this.setLookShortData();
+				await this.getShortDetailData();
+				await this.getUserInfoData();
 			},
 			// 下一集
-			nextEpisodeHandle() {
+			async nextEpisodeHandle() {
 				if(this.currentEpisode === this.shortDetailList.length - 1) return uni.showToast({ title: '当前为最后一集', icon: 'none' });
 				if(!this.loginData.balance || this.loginData.balance < this.shortDetailList[this.currentEpisode + 1].pay) return this.$goJump('/pages_square/recharge/recharge');
 				// if(this.shortDetailList[this.currentEpisode + 1].pay) {
@@ -200,8 +213,9 @@
 				// }
 				this.isPlay = true; this.initialTime = 0; this.currentEpisode++;
 				this.currentEpisodeData = this.shortDetailList[this.currentEpisode];
-				this.getShortDetailData();
-				this.getUserInfoData();
+				await this.setLookShortData();
+				await this.getShortDetailData();
+				await this.getUserInfoData();
 			},
 			// 播放暂停事件
 			videoPlayHandle(isPlay) {
@@ -210,7 +224,7 @@
 				this.videoContext.pause();
 			},
 			// 选择剧集
-			selectSeriesHandle(item, index) {
+			async selectSeriesHandle(item, index) {
 				// if(item.pay) return uni.showToast({ title: '购买本集后可看', icon: 'none' });
 				if(!this.loginData.balance || this.loginData.balance < item.pay) {
 					this.$goJump('/pages_square/recharge/recharge');
@@ -220,8 +234,9 @@
 				this.currentEpisode = index;
 				this.currentEpisodeData = item;
 				this.isPlay = true; this.initialTime = 0; this.isMeet = false;
-				this.getShortDetailData();
-				this.getUserInfoData();
+				await this.setLookShortData();
+				await this.getShortDetailData();
+				await this.getUserInfoData();
 			},
 			// 监听视频进度变化
 			videoTimeUpdateHandle({ detail }) {
