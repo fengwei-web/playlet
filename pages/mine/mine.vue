@@ -24,7 +24,7 @@
 </template>
 
 <script>
-	import { mapState } from 'vuex';
+	import { mapState, mapMutations } from 'vuex';
 	export default {
 		data() {
 			return {
@@ -35,8 +35,20 @@
 				]
 			}
 		},
+		onShow() {
+			this.getUserInfoData();
+		},
 		computed: {
 			...mapState(['loginData'])
+		},
+		methods: {
+			// 获取用户信息并存储
+			async getUserInfoData() {
+				const { code, result } = await this.$http('/user');
+				if(code !== 200) return;
+				this.$store.commit('setUserInfo', result);
+			},
+			...mapMutations(['setUserInfo'])
 		}
 	}
 </script>
